@@ -1,22 +1,25 @@
-Penjelasan Tugas 2 Bolahraga
+Penjelasan Tugas 3 Bolahraga
 Repo: https://github.com/waldan-r/bolahraga
 Web: http://waldan-rafid-bolahraga.pbp.cs.ui.ac.id
 
-1. Checklist diimplementasikan dengan panduan pada tutorial, dan catatan yang saya buat saat mengerjakan tutorial sehingga sebenarnya polanya akan sama dengan tutorial. Dimulai dari menginisiasikan proyek django baru, saya melakukan konfigurasi pada proyek yang berisikan package-package. Setelah itu, MVT diimplementasikan dengan membuat sebuah aplikasi "Main" kemudian melakukan pemodelan untuk class Product. Setelah itu, fungsi pada views dibuat untuk nantinya menjawab request dan melakukan sesuatu ke html (template). Ini di-routing dengan urls yang ada di level proyek (walaupun nanti akan bekerja sebaliknya)
+1. Data delivery diperlukan dalam pengimplementasian pemrograman platform untuk menjadi 'sistem komunikasi' data antara data mentah di database dengan user. Data delivery ini makanya dapat disajikan dalam bentuk yang mudah dipahami oleh kita sebagai user maupun program tertentu yang menjalankan perintah atau keputusan dari pengguna.
 
-2. Request Client 
-    \-> [urls.py] level proyek akan mengecek URL untuk menentukan view yang diambil (memanggil fungsi dari view), kalau tidak ada berarti notFound
-    \-> [views.py] melakukan fungsi yang dipanggil, misal pada tugas ini adalah untuk menampilkan main (show_main() dan dihubungkan dengan template)
-    \-> [template html] memuat konten yang akan ditampilkan menjadi page di web
-    \-> [views.py] balik dari pemanggilan template dan memberikan respon
-    \-> [Client] respon diberikan
+2. Menurut saya, JSON lebih mudah dipahami dibandingkan XML. Ini juga menjadi alasan kenapa JSON lebih populer yakni karena penyajian data berupa seperti dict yang cukup jelas untuk dimengerti secara cepat khususnya untuk orang yang lebih awam, sedangkan XML masih berbentuk tag elemen field yang juga menampilkan atribut lengkap beserta value yang mungkin sering dirasa terlalu banyak informasi yang disampaikan dan tidak sederhana.
 
-    pada tugas ini, model.py sebenarnya telah dibangun untuk menyiapkan Product yang nanti akan digunakan tetapi karena belum ada kebutuhan untuk meminta atau memuat data pada model.py, maka pola respon hanya seperti itu. model.py mungkin nanti dipakai sebagai jembatan dengan database.
+3. Method is_valid() pada form Django berfungsi sebagai validasi utama form yang diisi apakah sesuai dengan requirement data yang telah diminta sebelumnya. Bisa kita lihat pada saat memodelkan class product, kita juga memberikan batasan pada tiap field pada form sehingga method ini akan mengecek apabila form sudah terisi, terisi dengan benar, dan sesuai request atau tidak.
 
-3. settings.py berfungsi mengatur apa saja yang dibutuhkan pada proyek dan memuat konfigurasi tertentu. dalam kata lain, settings.py seperti pedoman untuk proyek ini melakukan sesuatu atau menggunakan tools tertentu untuk jalannya proyek.
+4. csrf_token dibutuhkan pada saat membuat form di Django sebagai verifikasi bahwa request POST benar dari user (secara langsung) dan kemudian dicek ulang oleh middleware. Ini juga memastikan bahwa tidak ada request dari pihak lain selain TRUSTED_ORIGINS yang dipastikan menampung request valid user. Apabila tidak ditambahkan, program akan rentan dengan CSRF (Cross-Site Request Forgery) yang dapat mengambil alih peran user dalam request sensitif seperti mengambil data, meminta melakukan transaksi dan lain-lain tanpa sepengetahuan user.
 
-4. Pada soal no. 2, models.py akan berguna ketika ada permintaan tertentu terhadap database. migrasi pada awal pemodelan dan juga setiap kali pengubahan pada model.py dilakukan untuk membuat penerapan skema model yang dibuat sebelumnya (pada models.py) ke dalam database lokal.
+5. Pada tugas kali ini, saya berusaha untuk tidak melihat tutorial materi sebelumnya dan mencoba mengaplikasikan apa yang sudah dilakukan pada proyek football-news. Karena pemrograman ini menggunakan framework, implementasi checklist tersebut sebenarnya cukup straight-forward mengikuti pedoman/pakem yang sudah ada. 
+- Pertama untuk fungsi data delivery pada views, saya menggunakan class HttpResponse untuk memberikan respon HTTP terhadap request. Fungsi ini kemudian di-routing dengan pola url masing-masing sehingga nantinya bisa dijalankan (tiap fungsinya berbeda-beda). 
+- Untuk pembuatan laman form, saya membuat berkas forms.py untuk mengetahui batasan field yang dibutuhkan untuk form ini, kemudian membuat halaman HTML yang dapat menampilkan form (add_product) sehingga bisa diisi oleh user dan juga menghubungkan dengan halaman lain (main, product_detail).
+mungkin yang akan saya lakukan selanjutnya adalah membuat tampilan form dan product detail yang dinamis dan estetik sehingga tidak hanya membuat tampilan sederhana sesuai yang ada di tutorial.
 
-5. Dari yang saya perhatikan, framework django memberikan kemudahan dalam proses software development karena tiap elemen cukup self-explanatory sehingga cukup mudah bahkan untuk pemula dalam mempelajari cara kerja dan alur pengembangan perangkat lunak ini. Django sebagai framework python juga memiliki virtual environment yang berisi konfigurasi proyek untuk membuat workspace agar tiap proyek dapat berjalan masing-masing.
+6. Sama dengan tutorial sebelumnya, tutorial 2 juga sangat mudah dipahami dan sudah mulai mempercayakan mahasiswa untuk bisa lebih eksplorasi dan mengulik tiap elemen langkah pengerjaannya sehingga bisa informatif sekaligus melatih kemampuan dalam pengerjaannya. 
 
-6. Menurut saya asdos sudah cukup baik dalam memberikan kesempatan eksplorasi melalui tutorial yang ada. Alur pada tutorial sudah sangat jelas dan sejauh ini terjamin program akan berjalan jika diikuti. Setiap potongan materi juga biasanya disertakan referensi atau dokumentasi sehingga saya bisa dengan mudah mengulik lebih lanjut untuk materi tersebut.
+Berikut screenshot hasil pengaksesan URL pada Postman
+![JSON](docs/image.png)
+![XML](docs/image-1.png)
+![XML by ID](docs/image-2.png)
+![JSON by ID](docs/image-3.png)
+
