@@ -12,4 +12,10 @@
 
 <p>{{ product.description }}</p>
 
+{% if news.user %}
+    <p>Seller: {{ news.user.username }}</p>
+{% else %}
+    <p>Seller: Anonymous</p>
+{% endif %}
+
 {% endblock content %}

@@ -10,11 +10,24 @@
 <h5>Kelas: </h5>
 <p>{{ kelas }}</p>
 
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
 <a href="{% url 'main:add_product' %}">
   <button>+ Add Product</button>
 </a>
 
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+
 <hr>
+
+<a href="?filter=all">
+    <button type="button">All Products</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Products</button>
+</a>
 
 {% if not product_list %}
 <p>Belum ada data produk.</p>
