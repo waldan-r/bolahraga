@@ -23,3 +23,16 @@ Berikut screenshot hasil pengaksesan URL pada Postman
 ![XML by ID](docs/image-2.png)
 ![JSON by ID](docs/image-3.png)
 
+
+Penjelasan Tugas 4: Auth, Session, Cookies
+1. Framework Django memiliki AuthenticationForm yang merupakan sebuah class untuk menerima username dan password serta mengecek apakah kedua hal tersebut valid. Bisa berupa pengecekan apakah user ada, user memiliki username dengan password yang tepat, dan beberapa fungsi lain yang terhubung form dan memperbolehkan untuk akses selanjutnya.
+Kelebihan dari AuthenticationForm adalah memiliki struktur yang sudah cukup lengkap sehingga bisa langsung dipakai dan bisa di-extend atau dimodifikasi sesuai dengan kebutuhan. Kekurangannya adalah ini bergantung pada username sehingga jika ingin login yang lebih aman dengan menggunakan email misalnya, kita butuh untuk membuat extension form sendiri.
+
+2. Autentikasi adalah memeriksa keautentikan user, artinya memastikan apakah ini user yang tepat dengan validasi-validasi yang telah ditentukan. Otorisasi artinya mengecek peran atau wewenang user untuk boleh melakukan hal apa saja. Django pada kasus ini memiliki implementasi dengan penggunaan AuthenticationForm, login, logout, dan sebagainya untuk melakukan autentikasi user atau juga bisa melakukan pemodelan user, sedangkan implementasi otorisasi biasanya berupa dekoratif @login_required, @permission_required yang menentukan fungsi pada program bisa diakses oleh user yang memang memiliki wewenang melakukan aktivitas tersebut.
+
+3. Session pada django memiliki kelebihan dalam keamanan untuk menyimpan state user karena biasanya langsung disimpan di storage setelah diisi di server. Kekurangannya berarti session memerlukan storage seperti di database atau cache
+Cookie memiliki kelebihan dalam menyimpan hal yang cukup ringan seperti settingan bahasa, tema, dan sebagainya sehingga tidak membutuhkan storage server. Kelemahannya biasanya pada ukuran maksimal (batas) 4KB/cookie per domain. Cookie juga rawan dengan ancaman siber apalagi ketika berhubungan dengan kebijakan privasi.
+
+4. Cookie default sebenarnya memiliki resiko atau potensi serangan seperti XSS yang bisa mengambil informasi cookie user dengan scripting. Namun, django sendiri sudah menyiapkan beberapa fungsi keamanan seperti HttpOnly yang akan secara default aktif, middleware proteksi CSRF yang akan menjaga request user saat beraktivitas di program, serta signed cookie session backend yang memastikan isi cookie tidak bisa diubah tanpa sepengetahuan user.
+
+5. Pada tugas ini, lebih banyak mengimplementasi format form yang telah dipelajari pada pekan sebelumnya. Pola alur kerja yang dilakukan adalah membuat fungsi yang diinginkan terlebih dahulu pada views.py; untuk register mengimplementasikan UserCreationForm dan login dengan AuthenticationForm. Login dan logout  mengimplementasikan session dan cookie dan untuk tugas ini digunakan dalam menyimpan data last session user pada web. Tiap fungsi kemudian dihubungkan dengan templates yang telah dibuat berbentuk form serta melakukan routing pada masing-masing template sehingga tiap fungsi memiliki tampilan yang berbeda. 
