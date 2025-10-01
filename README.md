@@ -36,3 +36,25 @@ Cookie memiliki kelebihan dalam menyimpan hal yang cukup ringan seperti settinga
 4. Cookie default sebenarnya memiliki resiko atau potensi serangan seperti XSS yang bisa mengambil informasi cookie user dengan scripting. Namun, django sendiri sudah menyiapkan beberapa fungsi keamanan seperti HttpOnly yang akan secara default aktif, middleware proteksi CSRF yang akan menjaga request user saat beraktivitas di program, serta signed cookie session backend yang memastikan isi cookie tidak bisa diubah tanpa sepengetahuan user.
 
 5. Pada tugas ini, lebih banyak mengimplementasi format form yang telah dipelajari pada pekan sebelumnya. Pola alur kerja yang dilakukan adalah membuat fungsi yang diinginkan terlebih dahulu pada views.py; untuk register mengimplementasikan UserCreationForm dan login dengan AuthenticationForm. Login dan logout  mengimplementasikan session dan cookie dan untuk tugas ini digunakan dalam menyimpan data last session user pada web. Tiap fungsi kemudian dihubungkan dengan templates yang telah dibuat berbentuk form serta melakukan routing pada masing-masing template sehingga tiap fungsi memiliki tampilan yang berbeda. 
+
+
+
+Penjelasan Tugas 5: Edit, Delete. Styling CSS
+1. Untuk suatu elemen HTML, akan ada urutan pengambilan CSS selector (spesifisitas) dari prioritas tinggi ke rendah. Urutannya adalah inline style, ID selector, baru ke class, pseudo-class, dan/atau atribut. Artinya, inline style yang paling spesifik karena ini terbatas untuk memberikan style pada baris tersebut. Namun, ada prinsip cascade yakni penerapan style yang muncul terakhir jika ada aturan style dengan prioritas yang sama.
+
+2. Responsive design diperlukan karena kita mengharapkan user bisa mengakses web dari device apa saja sehingga untuk kenyamanan, tiap tampilan disesuaikan dengan berbagai ukuran layar (laptop, hp, tablet, dll). Responsive design juga menuntut fleksibilitas tampilan dan juga akan mempermudah orang dalam mengakses konten (misalnya orang akan kesulitan untuk membaca tulisan yang kecil karena beda ukuran layar device, ini diselesaikan dengan responsive design).
+Contoh web dengan responsive design: e-commerce seperti tokopedia, memiliki tampilan web pada laptop maupun hp yang berbeda menyesuaikan ukurannya sehingga konten dapat dilihat dengan lebih mudah serta lebih rapi. Di HP juga biasanya komponen pendukung akan ditempatkan di navbar atau sistem layout lain.
+Contoh web tanpa responsive design: web lama atau seperti web pemerintahan yang jarang dilakukan pengembangan pada web sehingga konten yang dimuat di HP akan mengikuti rasio ukuran konten di laptop dan biasanya sangat kecil.
+
+3. Pada CSS box model, margin mengelilingi border, border mengelilingi padding, dan padding mengelilingi content. Dari dalam, konten yang dimuat (teks, gambar, dsb.) akan dibatasi oleh padding dan bersifat transparan. Border akan membatasi padding dan margin akan men-clear area di luar border (bersifat transparan juga). Untuk implementasinya, biasanya bisa dibuat seperti:
+div {
+  width: 300px;
+  border: 15px solid green;
+  padding: 50px;
+  margin: 20px;
+} // dari w3.schools.com
+
+4. Flexbox adalah sistem layout yang mengatur elemen dalam satu arah (satu dimensi), biasanya secara horizontal (row) atau vertikal (column). Contoh kegunaan flexbox seperti navbar, perataan elemen/card, atau komponen kecil seperti tombol yang biasanya diatur secara segaris.
+Gridlayout sesuai namanya berupa tabel yang bisa mengatur baris-baris dan kolom-kolom (dua dimensi). Ini biasanya digunakan untuk komponen yang lebih kompleks seperti layouting halaman, menampilkan produk-produk (seperti contoh: tokopedia; produk seperti tabel), atau bahkan form untuk autentikasi atau mengisi konten.
+
+5. Untuk checklist kali ini, saya hanya melakukan penambahan fungsi UPDATE dan DELETE data yang seperti biasa saya buat fungsinya pada views.py, membuat tampilan di masing-masing template .html, dan melakukan routing. Pada program ini, saya ingin mengimplementasikan styling dengan framework CSS Bootstrap walaupun masih hanya mengubah tampilan laman main dan login. Saya juga mempelajari terkait navbar dan meletakan informasi yang semula ada di main content (seperti nama dan kelas).
