@@ -1,18 +1,46 @@
 {% extends 'base.html' %} 
-{% block content %}
-<h1>Add Product</h1>
 
-<form method="POST">
-  {% csrf_token %}
-  <table>
-    {{ form.as_table }}
-    <tr>
-      <td></td>
-      <td>
-        <input type="submit" value="Add Product" />
-      </td>
-    </tr>
-  </table>
-</form>
+{% block meta %}
+<title>Add New Product | BOLAHRAGA</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-11 col-md-8 col-lg-7">
+            <div class="card p-4 p-md-5 shadow-sm border-0">
+                <div class="text-center mb-4">
+                    <h1 class="h3">Add New Product</h1>
+                    <p class="text-muted">Fill out the details below to list a new item.</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="d-grid mt-4">
+                      <input class="btn btn-primary-custom btn-lg" type="submit" value="Add Product" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

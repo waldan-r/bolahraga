@@ -1,21 +1,50 @@
 {% extends 'base.html' %}
+
+{% block meta %}
+<title>{{ product.name }} | BOLAHRAGA</title>
+{% endblock meta %}
+
 {% block content %}
-<p><a href="{% url 'main:show_main' %}"><button>← Back to Main</button></a></p>
+{% include 'navbar.html' %}
 
-<h1>{{ product.name }}</h1>
-<p><b>{{ product.get_category_display }}</b>
+<div class="container my-5">
+    <div class="mb-4">
+        <a href="{% url 'main:show_main' %}" class="btn btn-outline-secondary">
+            ← Back to All Products
+        </a>
+    </div>
 
-{% if product.thumbnail %}
-<img src="{{ product.thumbnail }}" alt="Product thumbnail" width="300">
-<br /><br />
-{% endif %}
+    <div class="row g-5">
+        <div class="col-md-5">
+            {% if product.thumbnail %}
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="img-fluid rounded shadow-sm w-100">
+            {% else %}
+                {# Placeholder jika tidak ada gambar #}
+                <img src="https://placehold.co/600x600?text=No+Image" alt="No image available" class="img-fluid rounded shadow-sm w-100">
+            {% endif %}
+        </div>
 
-<p>{{ product.description }}</p>
+        <div class="col-md-7">
+            <span class="badge bg-warning text-dark mb-2">{{ product.get_category_display }}</span>
+            
+            <h1 class="display-5 fw-bold">{{ product.name }}</h1>
 
-{% if news.user %}
-    <p>Seller: {{ news.user.username }}</p>
-{% else %}
-    <p>Seller: Anonymous</p>
-{% endif %}
+            <p class="text-muted">
+                Sold by: 
+                {% if product.user %}
+                    {{ product.user.username }}
+                {% else %}
+                    Anonymous
+                {% endif %}
+            </p>
+
+            <hr class="my-4">
+
+            <h4 class="mb-3">Product Description</h4>
+            <p>{{ product.description }}</p>
+
+            </div>
+    </div>
+</div>
 
 {% endblock content %}

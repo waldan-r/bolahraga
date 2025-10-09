@@ -1,9 +1,62 @@
+:root {
+  --primary-green-light: #6A994E; /* Ijo lebih terang untuk state normal */
+  --primary-green-dark: #386641;  /* Ijo tua untuk state hover */
+  --accent-yellow: #FBC740;
+  --cool-gray: #6C757D;
+  --light-bg: #F8F9FA;
+}
+
 .btn-custom {
-  background-color: #386641; /* Hijau gelap */
+  background-color: #386641;
   border-color: #386641;
   color: white;
 }
 
+.btn-primary-custom {
+  background-color: var(--primary-green-light);
+  border-color: var(--primary-green-light);
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+.btn-primary-custom:hover {
+  background-color: var(--primary-green-dark);
+  border-color: var(--primary-green-dark);
+  color: white;
+}
+
+.product-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+/* Custom Logout Button */
+.btn-logout-custom {
+  background-color: transparent;
+  border-color: transparent;
+  color: #dc3545; /* Warna merah "danger" dari Bootstrap */
+  font-weight: 500;
+  padding: 0.375rem 0.75rem; /* Samain paddingnya sama tombol lain */
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-logout-custom:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.navbar .btn-primary-custom {
+  background-color: var(--primary-green);
+  border-color: var(--primary-green);
+  color: #2c5134;
+}
+
+.navbar .btn-primary-custom:hover {
+  background-color: #2c5134; 
+  border-color: #2c5134;
+  color: white;
+}
 
 /* Styling default untuk tampilan desktop */
 nav {

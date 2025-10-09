@@ -58,3 +58,15 @@ div {
 Gridlayout sesuai namanya berupa tabel yang bisa mengatur baris-baris dan kolom-kolom (dua dimensi). Ini biasanya digunakan untuk komponen yang lebih kompleks seperti layouting halaman, menampilkan produk-produk (seperti contoh: tokopedia; produk seperti tabel), atau bahkan form untuk autentikasi atau mengisi konten.
 
 5. Untuk checklist kali ini, saya hanya melakukan penambahan fungsi UPDATE dan DELETE data yang seperti biasa saya buat fungsinya pada views.py, membuat tampilan di masing-masing template .html, dan melakukan routing. Pada program ini, saya ingin mengimplementasikan styling dengan framework CSS Bootstrap walaupun masih hanya mengubah tampilan laman main dan login. Saya juga mempelajari terkait navbar dan meletakan informasi yang semula ada di main content (seperti nama dan kelas).
+
+
+Penjelasan Tugas 6: AJAX dan JS
+1. Synchronus request adalah proses memberikan permintaan ke server dari client yang membuat browser akan berhenti melakukan proses dan menunggu sampai server memberikan respons halaman html yang baru. Sedangkan, asynchronus request adalah saat browser mengirim permintaan di belakang layar sehingga browser tidak berhenti atau menunggu dan user bisa terus melakukan interaksi seperti scroll, klik tombol lain, dan lainnya. browser juga masih bisa melakukan hal seperti menampilkan loading buffer dan sebagainya.
+
+2. AJAX bekerja di django dengan rangkaian implementasi yakni adanya aksi dari pengguna (di frontend) seperti mengklik tombol, kemudian 'event' itu ditangkap oleh eventListener untuk menjalankan fungsi AJAX tertentu dengan adanya fetch(). Request kemudian dikirim ke url spesifik yang sudah dibuat di django. Setelah request diterima dan dicocokkan dengan url pada views yang sesuai, logika yg diperlukan dieksekusi (operasi CRUD) kemudian mengembalikan respons dalam bentuk JSON (JsonResponse()). Kembali lagi ke JavaScript yang menerima JSON dengan fetch() dan menerjemahkan data dari JSON menjadi tampilan halaman (dengan DOM). Proses ini bisa terjadi bahkan tanpa reload browser.
+
+3. AJAX memiliki beberapa keuntungan seperti user experience yang lebih baik karena aplikasi terasa lebih mulus dan responsif (karena tidak page reload). AJAX juga efisien dengan server karena data yang diminta (JSON) memiliki ukuran jauh lebih kecil dibandingkan meminta halaman HTML karena tidak perlu merender ulang. AJAX juga memungkinkan fitur yang lebih dinamis dan interkatif seperti live search, infinite scroll, dan notifikasi real time.
+
+4. AJAX memastikan keamanan terutama di bagian backend yakni perlindungan CSRF dengan memastikan permintaan AJAX POST pada frontend menyertakan CSRF Token. Makanya, pada tugas ini terlihat saat memberikan form login atau register selalu memiliki token yang diambil dan disimpan di X-CSRFToken. 
+
+5. AJAX secara garis besar memberikan user experience yang lebih interaktif dan mulus. Contohnya di tugas ini misal pada saat menghapus produk, produk tersebut bisa langsung hilang dan halaman berubah tanpa menunggu reload. interface juga memungkinkan untuk lebih hidup dan tidak kaku.

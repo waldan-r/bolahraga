@@ -1,22 +1,33 @@
-<nav>
-  <h1>BOLAHRAGA</h1>
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top">
+  <div class="container">
+    
+    <a class="navbar-brand fw-bold" href="/">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top me-2">
+      BOLAHRAGA
+    </a>
 
-  <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="{% url 'main:add_product' %}">Add Product</a></li>
-  </ul>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  {% if user.is_authenticated %}
-    <div>
-      <span>Welcome, {{ name|default:user.username }}</span>
-      <span>Last login: {{ user.last_login|date:"M j, H:i" }}</span>
-      <span>{{ npm|default:"Waldan Rafid" }} - {{ class|default:"PBP F" }}</span>
-      <a href="{% url 'main:logout' %}">Logout</a>
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        </ul>
+
+      <div class="d-flex align-items-center">
+        <span>{{ npm|default:"Waldan Rafid" }}</span>
+        <small class="text-muted">PBP F</small>
+        {% if user.is_authenticated %}
+          <span class="navbar-text me-3">Welcome, {{ user.username }}!</span>
+          <a href="#" class="btn btn-primary-custom me-3" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</a>
+          <span>Last login: {{ user.last_login|date:"M j, H:i" }}</span>
+          <a href="/logout/" class="btn btn-logout-custom ms-3">Logout</a>
+        
+        {% else %}
+          <a href="/login/" class="btn btn-primary-custom">Sign In</a>
+        {% endif %}
+      </div>
     </div>
-  {% else %}
-    <div>
-      <a href="{% url 'main:login' %}">Login</a>
-      <a href="{% url 'main:register' %}">Register</a>
-    </div>
-  {% endif %}
+  </div>
 </nav>

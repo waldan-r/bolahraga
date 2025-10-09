@@ -16,5 +16,11 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
     path('product/<uuid:id>/edit', edit_product, name='edit_product'),
-    path('product/<uuid:id>/delete', delete_product, name='delete_product'),
+    path('delete/<uuid:pk>/', delete_product, name='delete_product'),
+    path('get-product-json/', get_product_json, name='get_product_json'),
+    path('add-product-ajax/', add_product_ajax, name='add_product_ajax'), 
+    path('get-product/<uuid:pk>/', get_product_for_edit, name='get_product_for_edit'),
+    path('update-product-ajax/<uuid:pk>/', update_product_ajax, name='update_product_ajax'),
+    path('login-ajax/', login_ajax, name='login_ajax'),
+    path('register-ajax/', register_ajax, name='register_ajax'),
 ]
