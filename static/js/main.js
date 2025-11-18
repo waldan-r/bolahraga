@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
             await registerUser(registerForm);
         });
     }
-    
+
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', async function(event) {
