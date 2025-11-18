@@ -29,7 +29,7 @@
     </div>
 
     {# Container utama untuk kartu produk (Dikasih ID) #}
-    <div id="product-grid" data-get-url="/get-product-json/" data-current-user="{{ user.username }}" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div id="product-grid" data-get-url="/get-product-json/" data-current-user="{{ user.username }}" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
         {# Awalnya, kita tetap render produk dari context Django #}
         {% if not product_list %}
             <div id="empty-state" class="text-center py-5 col-12">
