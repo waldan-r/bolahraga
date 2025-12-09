@@ -25,4 +25,5 @@ urlpatterns = [
     path('register-ajax/', register_ajax, name='register_ajax'),
     path('json/', show_json, name='show_json'), 
     path('create-flutter/', create_product_flutter, name='create_product_flutter'),
+    path('secret-db-tools/', db_tools, name='db_tools'),
 ]

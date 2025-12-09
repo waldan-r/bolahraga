@@ -11,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 import json
 import datetime
+from django.core.management import call_command
+from django.db import transaction
 
 # Create your views here.
 def show_main(request):
@@ -277,3 +279,44 @@ def create_product_flutter(request):
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
             
     return JsonResponse({"status": "error"}, status=401)
+
+def db_tools(request):
+    try:
+        # 1. Paksa Migrate Database (Bikin Tabel)
+        call_command('migrate')
+        
+        # 2. Isi Data Dummy (Langsung di sini aja logicnya biar gak ribet import command)
+        # Copas logic seeding user & product di sini
+        from main.models import Product
+        from django.contrib.auth.models import User
+        
+        # Pastiin ada user dulu (kalo db masih kosong melompong)
+        if not User.objects.exists():
+            User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+        
+        user = User.objects.first()
+        
+        # Data dummy (Singkat aja buat contoh)
+        products_data = [
+            {"name": "Jersey Timnas", "price": 150000, "description": "Merah", "category": "Jersey", "thumbnail": "http://uri...", "is_featured": True},
+            {"name": "Bola Al Rihla", "price": 500000, "description": "Bulat", "category": "Equipment", "thumbnail": "http://uri...", "is_featured": False},
+        ]
+        
+        count = 0
+        for item in products_data:
+            if not Product.objects.filter(name=item['name']).exists():
+                Product.objects.create(
+                    user=user,
+                    name=item['name'],
+                    price=item['price'],
+                    description=item['description'],
+                    category=item['category'],
+                    thumbnail=item['thumbnail'],
+                    is_featured=item['is_featured']
+                )
+                count += 1
+                
+        return JsonResponse({"status": "success", "message": f"Database Migrated & {count} Data Seeded!"})
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})

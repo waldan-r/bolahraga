@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+from os import environ
 from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
@@ -114,11 +116,17 @@ if PRODUCTION:
 else:
     # Development: gunakan SQLite
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+
+# INI KUNCINYA: Kalau ada DATABASE_URL (di server PWS), pake PostgreSQL
+if 'DATABASE_URL' in environ:
+    DATABASES['default'] = dj_database_url.config(
+        default=environ.get('DATABASE_URL')
+    )
 
 
 # Password validation
