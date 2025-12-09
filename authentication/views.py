@@ -1,73 +1,78 @@
-from django.shortcuts import render
-
-# Create your views here.
-from django.contrib.auth import authenticate, login as auth_login
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
 import json
+from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
-def login(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            auth_login(request, user)
-            # Login status successful.
-            return JsonResponse({
-                "username": user.username,
+def login_user(request):
+    if request.method == 'POST':
+        # Coba tangkap data dari JSON (Flutter)
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+        except:
+            # Kalau gagal, berarti dari Form HTML biasa
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            response_data = {
                 "status": True,
-                "message": "Login successful!"
-                # Add other data if you want to send data to Flutter.
-            }, status=200)
+                "message": "Login successful",
+                "username": user.username,
+            }
+            # Cek apakah request minta JSON (dari Flutter biasanya header application/json)
+            # Atau kita paksa return JSON kalau berhasil login biar Flutter seneng
+            return JsonResponse(response_data, status=200)
         else:
             return JsonResponse({
                 "status": False,
-                "message": "Login failed, account is disabled."
+                "message": "Username atau password salah",
             }, status=401)
 
-    else:
-        return JsonResponse({
-            "status": False,
-            "message": "Login failed, please check your username or password."
-        }, status=401)
-    
+    # Kalau GET (buka halaman web biasa)
+    return render(request, 'main/login.html')
+
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data['username']
-        password1 = data['password1']
-        password2 = data['password2']
+        try:
+            # Coba tangkap data dari JSON (Flutter)
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+            password_confirm = data.get('password_confirmation', password) # Default ke password kalau gak ada confirm
+        except:
+            # Fallback ke Form HTML
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            password_confirm = request.POST.get('password_confirmation')
 
-        # Check if the passwords match
-        if password1 != password2:
-            return JsonResponse({
-                "status": False,
-                "message": "Passwords do not match."
-            }, status=400)
-        
-        # Check if the username is already taken
+        if not username or not password:
+             return JsonResponse({"status": False, "message": "Data tidak lengkap"}, status=400)
+
+        if password != password_confirm:
+            return JsonResponse({"status": False, "message": "Password tidak sama"}, status=400)
+
         if User.objects.filter(username=username).exists():
-            return JsonResponse({
-                "status": False,
-                "message": "Username already exists."
-            }, status=400)
-        
-        # Create the new user
-        user = User.objects.create_user(username=username, password=password1)
-        user.save()
-        
-        return JsonResponse({
-            "username": user.username,
-            "status": 'success',
-            "message": "User created successfully!"
-        }, status=200)
-    
-    else:
-        return JsonResponse({
-            "status": False,
-            "message": "Invalid request method."
-        }, status=400)
+            return JsonResponse({"status": False, "message": "Username sudah digunakan"}, status=400)
+
+        # Buat user baru
+        new_user = User.objects.create_user(username=username, password=password)
+        new_user.save()
+
+        return JsonResponse({"status": True, "message": "Akun berhasil dibuat"}, status=200)
+
+    # Kalau GET
+    return render(request, 'main/register.html')
+
+@csrf_exempt
+def logout_user(request):
+    logout(request)
+    return JsonResponse({"status": True, "message": "Logout berhasil"}, status=200)

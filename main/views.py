@@ -7,6 +7,7 @@ from main.forms import ProductForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 import json
 import datetime
@@ -252,6 +253,27 @@ def show_json_by_id(request, product_id):
     
 @login_required(login_url='/auth/login/')
 def show_json(request):
-    # INI KUNCINYA: Filter data biar cuma punya user yang login yang muncul
-    data = Product.objects.filter(user=request.user) 
+    data = Product.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+# 2. TAMBAHIN FUNGSI INI (Khusus buat nerima data dari Flutter)
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            new_product = Product.objects.create(
+                user=request.user,
+                name=data["name"],
+                price=int(data["price"]),
+                description=data["description"],
+                category=data["category"],
+                thumbnail=data["thumbnail"],
+                is_featured=data["is_featured"] == "true" # Handle string to boolean if needed
+            )
+            new_product.save()
+            return JsonResponse({"status": "success"}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+            
+    return JsonResponse({"status": "error"}, status=401)
