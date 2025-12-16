@@ -65,15 +65,22 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = ["http://localhost", "http://127.0.0.1", "https://waldan-rafid-bolahraga.pbp.cs.ui.ac.id", "http://10.0.2.2"]
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
-SESSION_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SAMESITE = 'None'
+
+# --- BAGIAN PENTING (FIX LOGIN MENTAL) ---
+CSRF_COOKIE_SECURE = False      # False karena localhost pake HTTP
+SESSION_COOKIE_SECURE = False   # False karena localhost pake HTTP
+
+# Ganti dari 'None' ke 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'    
+SESSION_COOKIE_SAMESITE = 'Lax' 
+
+# Kalau mau aman, tambahin ini:
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 1209600
 
 ROOT_URLCONF = 'bolahraga.urls'
 

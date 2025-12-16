@@ -16,17 +16,22 @@
         </ul>
 
       <div class="d-flex align-items-center">
-        <span>{{ npm|default:"Waldan Rafid" }}</span>
-        <small class="text-muted">PBP F</small>
-        {% if user.is_authenticated %}
-          <span class="navbar-text me-3">Welcome, {{ user.username }}!</span>
-          <a href="#" class="btn btn-primary-custom me-3" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</a>
-          <span>Last login: {{ user.last_login|date:"M j, H:i" }}</span>
-          <a href="/logout/" class="btn btn-logout-custom ms-3">Logout</a>
-        
-        {% else %}
-          <a href="/login/" class="btn btn-primary-custom">Sign In</a>
-        {% endif %}
+          <span class="me-2">{{ npm|default:"Waldan Rafid" }}</span>
+          <small class="text-muted me-3">PBP F</small>
+
+          {% if user.is_authenticated %}
+              <span class="navbar-text me-3">Welcome, <b>{{ user.username }}</b>!</span>
+              
+              <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                  Add Product
+              </button>
+              
+              <a href="{% url 'main:logout' %}" class="btn btn-danger">Logout</a>
+
+          {% else %}
+              <a href="{% url 'main:login' %}" class="btn btn-success">Sign In</a>
+              <a href="{% url 'main:register' %}" class="btn btn-outline-success ms-2">Register</a>
+          {% endif %}
       </div>
     </div>
   </div>
