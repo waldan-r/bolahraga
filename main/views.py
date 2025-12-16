@@ -127,6 +127,15 @@ def login_ajax(request):
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
 
+@csrf_exempt
+def logout_ajax(request):
+    logout(request)
+    return JsonResponse({
+        "status": True,
+        "message": "Logout berhasil!",
+        "username": ""
+    })
+
 def get_product_json(request):
     filter_param = request.GET.get('filter')
     if filter_param == 'my':
@@ -231,11 +240,6 @@ def show_xml(request):
     product_list = Product.objects.all()
     xml_data = serializers.serialize("xml", product_list)
     return HttpResponse(xml_data, content_type="application/xml")
-
-# def show_json(request):
-#     product_list = Product.objects.all()
-#     json_data = serializers.serialize("json", product_list)
-#     return HttpResponse(json_data, content_type="application/json")
 
 def show_xml_by_id(request, product_id):
     try:
