@@ -37,7 +37,7 @@ def login_user(request):
             }, status=401)
 
     # Kalau GET (buka halaman web biasa)
-    return render(request, 'main/login.html')
+    return render(request, 'login.html')
 
 @csrf_exempt
 def register(request):
@@ -70,7 +70,7 @@ def register(request):
         return JsonResponse({"status": True, "message": "Akun berhasil dibuat"}, status=200)
 
     # Kalau GET
-    return render(request, 'main/register.html')
+    return render(request, 'register.html')
 
 @csrf_exempt
 def logout_user(request):
