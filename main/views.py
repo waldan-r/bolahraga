@@ -257,7 +257,7 @@ def show_json_by_id(request, product_id):
     except Product.DoesNotExist:
         return HttpResponse(status=404)
     
-@login_required(login_url='/auth/login/')
+@login_required(login_url='/login/')
 def show_json(request):
     data = Product.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
