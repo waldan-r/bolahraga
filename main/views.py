@@ -101,6 +101,7 @@ def edit_product(request, id):
 # TUGAS 6 AJAX
 # =============
 
+@csrf_exempt  
 def register_ajax(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -111,6 +112,7 @@ def register_ajax(request):
             return JsonResponse({"status": "error", "errors": form.errors}, status=400)
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 
+@csrf_exempt  
 def login_ajax(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -121,7 +123,7 @@ def login_ajax(request):
 
         if user is not None:
             login(request, user)
-            return JsonResponse({"status": "success", "message": "Login successful!"})
+            return JsonResponse({"status": "success", "message": "Login successful!", "username": username})
         else:
             return JsonResponse({"status": "error", "message": "Invalid username or password."}, status=401)
 
@@ -262,7 +264,8 @@ def show_json(request):
     data = Product.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
-# 2. TAMBAHIN FUNGSI INI (Khusus buat nerima data dari Flutter)
+
+
 @csrf_exempt
 def create_product_flutter(request):
     if request.method == 'POST':
@@ -275,52 +278,53 @@ def create_product_flutter(request):
                 description=data["description"],
                 category=data["category"],
                 thumbnail=data["thumbnail"],
-                is_featured=data["is_featured"] == "true" # Handle string to boolean if needed
+                is_featured=str(data["is_featured"]).lower() == 'true'
             )
             new_product.save()
             return JsonResponse({"status": "success"}, status=200)
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
-            
     return JsonResponse({"status": "error"}, status=401)
 
-def db_tools(request):
-    try:
-        # 1. Paksa Migrate Database (Bikin Tabel)
-        call_command('migrate')
-        
-        # 2. Isi Data Dummy (Langsung di sini aja logicnya biar gak ribet import command)
-        # Copas logic seeding user & product di sini
-        from main.models import Product
-        from django.contrib.auth.models import User
-        
-        # Pastiin ada user dulu (kalo db masih kosong melompong)
-        if not User.objects.exists():
-            User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-        
-        user = User.objects.first()
-        
-        # Data dummy (Singkat aja buat contoh)
-        products_data = [
-            {"name": "Jersey Timnas", "price": 150000, "description": "Merah", "category": "Jersey", "thumbnail": "http://uri...", "is_featured": True},
-            {"name": "Bola Al Rihla", "price": 500000, "description": "Bulat", "category": "Equipment", "thumbnail": "http://uri...", "is_featured": False},
-        ]
-        
-        count = 0
-        for item in products_data:
-            if not Product.objects.filter(name=item['name']).exists():
-                Product.objects.create(
-                    user=user,
-                    name=item['name'],
-                    price=item['price'],
-                    description=item['description'],
-                    category=item['category'],
-                    thumbnail=item['thumbnail'],
-                    is_featured=item['is_featured']
-                )
-                count += 1
-                
-        return JsonResponse({"status": "success", "message": f"Database Migrated & {count} Data Seeded!"})
+@csrf_exempt
+def edit_product_flutter(request, id):
+    if request.method == 'POST':
+        try:
+            product = Product.objects.get(pk=id)
+            if product.user != request.user:
+                 return JsonResponse({"status": "error", "message": "Unauthorized"}, status=403)
 
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)})
+            data = json.loads(request.body)
+            
+            product.name = data['name']
+            product.price = int(data['price'])
+            product.description = data['description']
+            product.category = data['category']
+            product.thumbnail = data['thumbnail']
+            product.is_featured = str(data['is_featured']).lower() == 'true'
+            
+            product.save()
+            
+            return JsonResponse({"status": "success", "message": "Product updated!"}, status=200)
+        except Product.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Product not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+            
+    return JsonResponse({"status": "error", "message": "Invalid method"}, status=401)
+
+@csrf_exempt
+def delete_product_flutter(request, id):
+    if request.method == 'POST':
+        try:
+            product = Product.objects.get(pk=id)
+            
+            if product.user != request.user:
+                return JsonResponse({"status": "error", "message": "Unauthorized"}, status=403)
+            
+            product.delete()
+            return JsonResponse({"status": "success", "message": "Product deleted!"}, status=200)
+        except Product.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Product not found"}, status=404)
+            
+    return JsonResponse({"status": "error", "message": "Invalid method"}, status=401)

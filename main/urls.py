@@ -23,8 +23,8 @@ urlpatterns = [
     path('update-product-ajax/<uuid:pk>/', update_product_ajax, name='update_product_ajax'),
     path('login-ajax/', login_ajax, name='login_ajax'),
     path('register-ajax/', register_ajax, name='register_ajax'),
-    path('json/', show_json, name='show_json'), 
-    path('create-flutter/', create_product_flutter, name='create_product_flutter'),
-    path('secret-db-tools/', db_tools, name='db_tools'),
     path('auth/logout/', logout_ajax, name='logout_ajax'),
+    path('create-flutter/', create_product_flutter, name='create_product_flutter'),
+    path('edit-flutter/<uuid:id>/', edit_product_flutter, name='edit_product_flutter'),
+    path('delete-flutter/<uuid:id>/', delete_product_flutter, name='delete_product_flutter'),
 ]
