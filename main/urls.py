@@ -1,38 +1,43 @@
 from django.urls import path
 from main.views import *
 
-
 app_name = 'main'
 
 urlpatterns = [
+    # Main Views
     path('', show_main, name='show_main'),
     path('add-product/', add_product, name='add_product'),
     path('product/<str:id>/', show_product, name='show_product'),
-    path('xml/', show_xml, name='show_xml'),
-    path('json/', show_json, name='show_json'),
-    path('xml/<str:product_id>/', show_xml_by_id, name='show_xml_by_id'),
-    path('json/<str:product_id>/', show_json_by_id, name='show_json_by_id'),
+    
+    # Auth Web (Standard)
     path('register/', register, name='register'),
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
     
-    # --- FITUR FLUTTER & AJAX ---
+    # Auth Flutter / AJAX (PENTING BUAT APP LU)
+    path('login-ajax/', login_ajax, name='login_ajax'),
+    path('register-ajax/', register_ajax, name='register_ajax'),
+    path('auth/logout/', logout_ajax, name='logout_ajax'),
+
+    # Data Delivery
+    path('xml/', show_xml, name='show_xml'),
+    path('json/', show_json, name='show_json'),
+    path('xml/<str:product_id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<str:product_id>/', show_json_by_id, name='show_json_by_id'),
+    
+    # CRUD Operations (AJAX/Flutter)
     path('product/<uuid:id>/edit', edit_product, name='edit_product'),
     path('delete/<uuid:pk>/', delete_product, name='delete_product'),
     path('get-product-json/', get_product_json, name='get_product_json'),
     path('add-product-ajax/', add_product_ajax, name='add_product_ajax'), 
     path('get-product/<uuid:pk>/', get_product_for_edit, name='get_product_for_edit'),
     path('update-product-ajax/<uuid:pk>/', update_product_ajax, name='update_product_ajax'),
-    
-    # Auth Flutter
-    path('login-ajax/', login_ajax, name='login_ajax'),
-    path('register-ajax/', register_ajax, name='register_ajax'),
-    path('auth/logout/', logout_ajax, name='logout_ajax'),
 
-    # CRUD Flutter
+    # Flutter Specific CRUD
     path('create-flutter/', create_product_flutter, name='create_product_flutter'),
     path('edit-flutter/<uuid:id>/', edit_product_flutter, name='edit_product_flutter'),
     path('delete-flutter/<uuid:id>/', delete_product_flutter, name='delete_product_flutter'),
 
+    # Tools
     path('secret-db-tools/', db_tools, name='db_tools'),
 ]

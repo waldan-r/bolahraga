@@ -1,20 +1,25 @@
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.core import serializers
+import json
+import datetime
 from django.shortcuts import render, redirect, get_object_or_404
-from main.models import Product, User
-from main.forms import ProductForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib import messages
-import json
-import datetime
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.urls import reverse
+from django.core import serializers
 from django.core.management import call_command
-from django.db import transaction
+from django.contrib import messages
 
-# Create your views here.
+# Import model lu
+from main.models import Product
+from main.forms import ProductForm
+
+# =================================================
+#  VIEWS UTAMA (HTML/TEMPLATE)
+# =================================================
+
 def show_main(request):
     filter_type = request.GET.get('filter', 'all')
     form = ProductForm()
@@ -32,8 +37,6 @@ def show_main(request):
     }
     return render(request, "main.html", context)
 
-
-# FUNGSI REGISTER DAN LOGIN #
 def register(request):
     form = UserCreationForm()
 
@@ -49,7 +52,7 @@ def register(request):
 
 def login_user(request):
     if request.method == 'POST':
-        form =  AuthenticationForm(data=request.POST)
+        form = AuthenticationForm(data=request.POST)
 
         if form.is_valid():
             user = form.get_user()
@@ -69,7 +72,6 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
-#FUNGSI UTAMA PROGRAM
 def add_product(request):
     form = ProductForm(request.POST or None)
     if form.is_valid() and request.method == "POST":
@@ -97,35 +99,48 @@ def edit_product(request, id):
     context = {'form':form}
     return render(request, 'edit_product.html', context)
 
-# =============
-# TUGAS 6 AJAX
-# =============
+# =================================================
+#  AJAX / FLUTTER AUTHENTICATION
+# =================================================
 
 @csrf_exempt  
 def register_ajax(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        # Logic ganda: Coba baca JSON dulu, kalau gagal baru baca POST biasa
+        # Ini penting biar support Flutter (JSON) dan HTML Form biasa
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            data = request.POST
+
+        # UserCreationForm butuh data dictionary
+        form = UserCreationForm(data)
+
         if form.is_valid():
             form.save()
             return JsonResponse({"status": "success", "message": "Account created! Please log in."})
         else:
             return JsonResponse({"status": "error", "errors": form.errors}, status=400)
-    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+            
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
 
 @csrf_exempt  
 def login_ajax(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data.get("username")
-        password = data.get("password")
+        try:
+            data = json.loads(request.body)
+            username = data.get("username")
+            password = data.get("password")
+            
+            user = authenticate(request, username=username, password=password)
 
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return JsonResponse({"status": "success", "message": "Login successful!", "username": username})
-        else:
-            return JsonResponse({"status": "error", "message": "Invalid username or password."}, status=401)
+            if user is not None:
+                login(request, user)
+                return JsonResponse({"status": "success", "message": "Login successful!", "username": username})
+            else:
+                return JsonResponse({"status": "error", "message": "Invalid username or password."}, status=401)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
 
@@ -137,6 +152,10 @@ def logout_ajax(request):
         "message": "Logout berhasil!",
         "username": ""
     })
+
+# =================================================
+#  PRODUCT API (JSON/XML)
+# =================================================
 
 def get_product_json(request):
     filter_param = request.GET.get('filter')
@@ -152,10 +171,11 @@ def get_product_json(request):
         product_list.append({
             'pk': product.pk,
             'name': product.name,
-            'category': product.get_category_display(),
+            'category': product.get_category_display(), # Mengambil label human-readable
             'description': product.description,
-            'thumbnail': product.thumbnail,
+            'thumbnail': product.thumbnail, # Pastikan ini string URL di model lu
             'user': product.user.username if product.user else 'Anonymous',
+            'price': product.price,
         })
     
     return JsonResponse(product_list, safe=False)
@@ -201,13 +221,12 @@ def add_product_ajax(request):
             new_product.user = request.user
             new_product.save()
             
-            # Siapkan data produk baru untuk dikirim balik sebagai JSON
             product_data = {
                 'pk': new_product.pk,
                 'name': new_product.name,
                 'category': new_product.get_category_display(),
                 'description': new_product.description,
-                'thumbnail': new_product.thumbnail.url if new_product.thumbnail else '',
+                'thumbnail': new_product.thumbnail, # Sesuaikan jika pake ImageField (.url)
                 'user': new_product.user.username,
             }
 
@@ -236,8 +255,6 @@ def update_product_ajax(request, pk):
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
 
 
-
-# Data Delivery (XML/JSON) #
 def show_xml(request):
     product_list = Product.objects.all()
     xml_data = serializers.serialize("xml", product_list)
@@ -265,19 +282,26 @@ def show_json(request):
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 
+# =================================================
+#  FLUTTER SPECIFIC HANDLERS
+# =================================================
 
 @csrf_exempt
 def create_product_flutter(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            # Pastikan user sudah login (punya session cookie)
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "Unauthorized. Please login first."}, status=401)
+
             new_product = Product.objects.create(
                 user=request.user,
                 name=data["name"],
                 price=int(data["price"]),
                 description=data["description"],
                 category=data["category"],
-                thumbnail=data["thumbnail"],
+                thumbnail=data["thumbnail"], # Anggap string URL
                 is_featured=str(data["is_featured"]).lower() == 'true'
             )
             new_product.save()
@@ -329,12 +353,16 @@ def delete_product_flutter(request, id):
             
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=401)
 
+# Utility buat reset DB (Hati-hati dipake di prod)
 def db_tools(request):
     try:
         call_command('migrate')
-        if not User.objects.exists():
+        
+        # Cek user admin ada atau belum
+        if not User.objects.filter(username='admin').exists():
             User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
             print("Superuser created")
+        
         user = User.objects.first()
         
         if not Product.objects.exists():
