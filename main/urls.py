@@ -15,16 +15,24 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
+    
+    # --- FITUR FLUTTER & AJAX ---
     path('product/<uuid:id>/edit', edit_product, name='edit_product'),
     path('delete/<uuid:pk>/', delete_product, name='delete_product'),
     path('get-product-json/', get_product_json, name='get_product_json'),
     path('add-product-ajax/', add_product_ajax, name='add_product_ajax'), 
     path('get-product/<uuid:pk>/', get_product_for_edit, name='get_product_for_edit'),
     path('update-product-ajax/<uuid:pk>/', update_product_ajax, name='update_product_ajax'),
+    
+    # Auth Flutter
     path('login-ajax/', login_ajax, name='login_ajax'),
     path('register-ajax/', register_ajax, name='register_ajax'),
     path('auth/logout/', logout_ajax, name='logout_ajax'),
+
+    # CRUD Flutter
     path('create-flutter/', create_product_flutter, name='create_product_flutter'),
     path('edit-flutter/<uuid:id>/', edit_product_flutter, name='edit_product_flutter'),
     path('delete-flutter/<uuid:id>/', delete_product_flutter, name='delete_product_flutter'),
+
+    path('secret-db-tools/', db_tools, name='db_tools'),
 ]
