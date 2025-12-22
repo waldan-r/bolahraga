@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.core import serializers
 from django.shortcuts import render, redirect, get_object_or_404
-from main.models import Product
+from main.models import Product, User
 from main.forms import ProductForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
@@ -328,3 +328,36 @@ def delete_product_flutter(request, id):
             return JsonResponse({"status": "error", "message": "Product not found"}, status=404)
             
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=401)
+
+def db_tools(request):
+    try:
+        call_command('migrate')
+        if not User.objects.exists():
+            User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+            print("Superuser created")
+        user = User.objects.first()
+        
+        if not Product.objects.exists():
+            Product.objects.create(
+                user=user,
+                name="Jersey Timnas", 
+                price=150000, 
+                description="Jersey merah kebanggaan", 
+                category="player_gear",
+                thumbnail="https://example.com/jersey.jpg", 
+                is_featured=True
+            )
+            Product.objects.create(
+                user=user,
+                name="Bola Al Rihla", 
+                price=500000, 
+                description="Bola piala dunia", 
+                category="match_equipment", 
+                thumbnail="https://example.com/bola.jpg", 
+                is_featured=False
+            )
+                
+        return JsonResponse({"status": "success", "message": "Database Migrated & Data Seeded!"})
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
