@@ -127,21 +127,49 @@ def register_ajax(request):
 @csrf_exempt  
 def login_ajax(request):
     if request.method == 'POST':
+        # Inisialisasi variabel
+        username = ""
+        password = ""
+
+        # STRATEGI HIBRIDA: Coba baca JSON dulu, kalau gagal, baca Form Data
         try:
+            # Cara 1: Baca sbg JSON (Buat Postman/Flutter postJson)
             data = json.loads(request.body)
             username = data.get("username")
             password = data.get("password")
+        except:
+            # Cara 2: Baca sbg Form Data (Buat Flutter request.login / HTML Form)
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+
+        # Cek autentikasi
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"status": "success", "message": "Login successful!", "username": username})
+        else:
+            return JsonResponse({"status": "error", "message": "Invalid username or password."}, status=401)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
+
+@csrf_exempt  
+def register_ajax(request):
+    if request.method == 'POST':
+        # HIBRIDA JUGA
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            data = request.POST
+
+        form = UserCreationForm(data)
+
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status": "success", "message": "Account created! Please log in."})
+        else:
+            return JsonResponse({"status": "error", "errors": form.errors}, status=400)
             
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
-                login(request, user)
-                return JsonResponse({"status": "success", "message": "Login successful!", "username": username})
-            else:
-                return JsonResponse({"status": "error", "message": "Invalid username or password."}, status=401)
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=400)
-
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
 
 @csrf_exempt
